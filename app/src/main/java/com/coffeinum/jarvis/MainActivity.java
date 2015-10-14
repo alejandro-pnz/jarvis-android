@@ -2,25 +2,34 @@ package com.coffeinum.jarvis;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.coffeinum.jarvis.com.coffeinum.jarvis.device.Device;
+import com.coffeinum.jarvis.com.coffeinum.jarvis.device.Dictionary;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+
+import java.util.Map;
+
 import ai.api.AIConfiguration;
 import ai.api.AIListener;
 import ai.api.AIService;
 import ai.api.model.AIError;
 import ai.api.model.AIResponse;
+import ai.api.model.Result;
 
 
 public class MainActivity extends AppCompatActivity implements AIListener{
 
     Button voiceControlButton;
     AIService aiService;
-    final AIConfiguration config = new AIConfiguration( "9ad76731-7552-47f8-a3ef-7f906f5fbf00",
-            "4f24c29c52a64232bc5d2b6057cf93f3",
+    final AIConfiguration config = new AIConfiguration( "4f24c29c52a64232bc5d2b6057cf93f3",
+            "9ad76731-7552-47f8-a3ef-7f906f5fbf00",
             AIConfiguration.SupportedLanguages.English,
             AIConfiguration.RecognitionEngine.System);
 
@@ -66,12 +75,35 @@ public class MainActivity extends AppCompatActivity implements AIListener{
 
     @Override
     public void onResult(AIResponse aiResponse) {
-        Toast.makeText(this, aiResponse.getResult().toString(),Toast.LENGTH_SHORT).show();
+        Result result = aiResponse.getResult();
+        Device device = new Device();
+        if( result.getParameters() != null && !result.getParameters().isEmpty()){
+            for( final Map.Entry<String, JsonElement> entry : result.getParameters().entrySet()){
+                if( entry.getKey().equals( Dictionary.DEVICE_KEY)){
+                    device.type = entry.getValue().getAsString();
+                }
+                else if(entry.getKey().equals( Dictionary.STATE_KEY)){
+                    String value = entry.getValue().getAsString();
+                    if( value.equals(Dictionary.STATE_OFF_KEY))
+                        device.isTurnedOn = false;
+                    else if( value.equals(Dictionary.STATE_ON_KEY))
+                        device.isTurnedOn = true;
+                }
+            }
+        }
+        //**Time to receive to server**
+        //Convert to JSON
+        String deviceState = (new GsonBuilder()).create().toJson(device);
+        Log.d( "DEVICE", deviceState);
+        //NetworkConnectionTask.doInBackground( REQUEST);
+        //
+        //
+        //
     }
 
     @Override
     public void onError(AIError aiError) {
-        Toast.makeText(this, R.string.voice_error, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.voice_error + aiError.getMessage(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
