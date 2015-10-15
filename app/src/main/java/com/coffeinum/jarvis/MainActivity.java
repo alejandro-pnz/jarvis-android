@@ -1,5 +1,8 @@
 package com.coffeinum.jarvis;
 
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,8 +13,12 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.coffeinum.jarvis.broadcastreciever.JarvisBroadcastReceiver;
 import com.coffeinum.jarvis.com.coffeinum.jarvis.device.Device;
 import com.coffeinum.jarvis.com.coffeinum.jarvis.device.Dictionary;
+import com.coffeinum.jarvis.contentprovider.DbConverter;
+import com.coffeinum.jarvis.contentprovider.DeviceContract;
+import com.coffeinum.jarvis.contentprovider.JarvisContentProvider;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 
@@ -39,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements AIListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        loadValues();
+
         aiService = AIService.getService(this, config);
 
         aiService.setListener(this);
@@ -47,9 +56,27 @@ public class MainActivity extends AppCompatActivity implements AIListener{
         voiceControlButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, JarvisBroadcastReceiver.class);
+                sendBroadcast(intent);
                 aiService.startListening();
             }
         });
+    }
+
+    private void loadValues() {
+        String[] projectionColumns =
+                {
+                        DeviceContract.DeviceEntry.COLUMN_NAME_SERVICE_ID,
+                        DeviceContract.DeviceEntry.COLUMN_STATE,
+                        DeviceContract.DeviceEntry.COLUMN_NAME,
+                        DeviceContract.DeviceEntry._ID
+                };
+
+        Cursor query = getContentResolver().query(JarvisContentProvider.CONTENT_URI_DEVICES,
+                projectionColumns,
+                null,
+                null,
+                null);
     }
 
     @Override
@@ -92,14 +119,20 @@ public class MainActivity extends AppCompatActivity implements AIListener{
                 }
             }
         }
-        //**Time to receive to server**
+        syncStateWithServer(device);
         //Convert to JSON
         String deviceState = (new GsonBuilder()).create().toJson(device);
         Log.d( "DEVICE", deviceState);
+        Toast.makeText(this, deviceState, Toast.LENGTH_SHORT).show();
         //NetworkConnectionTask.doInBackground( REQUEST);
         //
         //
         //
+    }
+
+    private void syncStateWithServer(Device device) {
+        ContentValues values = DbConverter.convertToContentValues(device);
+        getContentResolver().update(JarvisContentProvider.CONTENT_URI_DEVICES, values, "name like \"" + device.type + "\"",  null);
     }
 
     @Override
