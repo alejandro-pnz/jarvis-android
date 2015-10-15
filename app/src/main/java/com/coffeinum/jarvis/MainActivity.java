@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.coffeinum.jarvis.com.coffeinum.jarvis.device.Device;
@@ -26,7 +27,7 @@ import ai.api.model.Result;
 
 public class MainActivity extends AppCompatActivity implements AIListener{
 
-    Button voiceControlButton;
+    ImageButton voiceControlButton;
     AIService aiService;
     final AIConfiguration config = new AIConfiguration( "4f24c29c52a64232bc5d2b6057cf93f3",
             "9ad76731-7552-47f8-a3ef-7f906f5fbf00",
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements AIListener{
 
         aiService.setListener(this);
 
-        voiceControlButton = (Button)findViewById(R.id.voice_control_btn);
+        voiceControlButton = (ImageButton)findViewById(R.id.voice_control_btn);
         voiceControlButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
