@@ -65,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
                 saveInPref(username,password);
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
+                finish();
             } else if (result.equals("Not Found")) {
                 Toast.makeText(LoginActivity.this, "Error: wrong username or password", Toast.LENGTH_LONG)
                         .show();
