@@ -1,4 +1,4 @@
-package com.coffeinum.jarvis.contentprovider;
+package com.coffeinum.jarvis.model;
 
 import android.provider.BaseColumns;
 

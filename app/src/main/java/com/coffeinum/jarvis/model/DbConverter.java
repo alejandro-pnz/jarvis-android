@@ -1,14 +1,9 @@
-package com.coffeinum.jarvis.contentprovider;
+package com.coffeinum.jarvis.model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
-import com.coffeinum.jarvis.com.coffeinum.jarvis.device.Device;
-
-import java.io.ByteArrayOutputStream;
-import java.util.Date;
+import com.coffeinum.jarvis.device.Device;
 
 public class DbConverter {
 
@@ -20,7 +15,7 @@ public class DbConverter {
         return contentValues;
     }
 
-    public static  Device convertToDevice(Cursor cursor) {
+    public static Device convertToDevice(Cursor cursor) {
         int id = cursor.getInt(cursor.getColumnIndex(DeviceContract.DeviceEntry._ID));
         String serviceId = cursor.getString(cursor.getColumnIndex(DeviceContract.DeviceEntry.COLUMN_NAME_SERVICE_ID));
         String title = cursor.getString(cursor.getColumnIndex(DeviceContract.DeviceEntry.COLUMN_NAME));

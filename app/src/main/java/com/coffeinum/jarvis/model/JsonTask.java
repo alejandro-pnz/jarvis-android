@@ -1,4 +1,4 @@
-package com.coffeinum.jarvis.contentprovider;
+package com.coffeinum.jarvis.model;
 
 import android.annotation.TargetApi;
 import android.os.AsyncTask;
@@ -52,11 +52,9 @@ public abstract class JsonTask extends AsyncTask<Void, Void, String> {
                         sb.append(line);
                     }
                 }
-                catch (IOException e) {}
+                catch (IOException ignored) {}
                 return parseJson(sb.toString());
             }
-        } catch (MalformedURLException e) {
-        } catch (ProtocolException e) {
         } catch (IOException e) {
         }
         return "";

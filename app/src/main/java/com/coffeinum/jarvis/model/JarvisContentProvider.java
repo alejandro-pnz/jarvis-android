@@ -1,4 +1,4 @@
-package com.coffeinum.jarvis.contentprovider;
+package com.coffeinum.jarvis.model;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -8,7 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
-import com.coffeinum.jarvis.com.coffeinum.jarvis.device.Device;
+import com.coffeinum.jarvis.device.Device;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,11 +22,8 @@ public class JarvisContentProvider extends ContentProvider {
 
     public static final Uri CONTENT_URI_DEVICES = Uri.parse("content://com.coffeinum.jarvis.device/devices/");
     private static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    private ProjectDbHelper dbHelper;
-
     private static final int DEVICES = 0;
     private static final int DEVICES_ID = 1;
-
     private static String url = "https://api.parse.com/1/classes/Device";
     private static String POST = "POST";
     private static String GET = "GET";
@@ -35,6 +32,8 @@ public class JarvisContentProvider extends ContentProvider {
         uriMatcher.addURI("com.coffeinum.jarvis.device", "devices", DEVICES);
         uriMatcher.addURI("com.coffeinum.jarvis.device", "devices/#", DEVICES_ID);
     }
+
+    private ProjectDbHelper dbHelper;
 
     public JarvisContentProvider() {
     }
